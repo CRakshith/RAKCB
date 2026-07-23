@@ -1,0 +1,6 @@
+this is the demo content created by using git in local repository
+
+now i want multiple files to be committed 
+
+this
+

@@ -1,0 +1,19 @@
+# to manage the muliple container buids & its lifecyle
+
+name: my-application
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+  
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+  
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"

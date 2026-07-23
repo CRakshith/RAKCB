@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build'){
+            steps {
+                sh 'ls -la'
+                echo 'this is first declaration of build stage'
+            }
+        }
+        stage('docker build'){
+            steps {
+                echo 'here iam building the docker image'
+            }
+        }
+        stage('Test'){
+            steps {
+                echo 'this is first declaration of test stage'
+            }
+        }
+        stage('Testing poll scm'){
+            steps {
+                echo 'testing the jenkins scm polling'
+                echo 'adding statements for stage view'
+            }
+        }
+        stage('Test Webhook'){
+            steps {
+                echo "testing webhook functionality"
+            }
+        }
+    }
+}
