@@ -1,0 +1,138 @@
+TCP 2377 Cluster management
+TCP 7946 Node Communication(TCP)
+UDP 7946 Node Communication(UDP)
+UDP 4789 Overlay Networks
+
+
+
+
+Docker-compose:"https://www.google.com/search?q=in+docker+run+we+use+docker+run+-d+-p+80%3A80+%3CDocker+image%3E%3A%3Cversion%3E&sca_esv=3f4a3b12c1dfeeaa&rlz=1C1GCEA_enIN1222IN1222&sxsrf=APpeQntAQuaaq9W0VAxYDSVSCIPyrF4jRg%3A1784568186774&source=chrome.ob&fbs=ABfTbFVyMZGZf1hfvX9uKjN_-G8c4u0nXx4bEIpwm1lnNH832VstEKsVDqPorK0Gahnm2nrruedQ0d32Et2kDhW_DVrEiVEEKhGMS6J6qOai58Kp-xhksXV28NogeTUukXLA6cErqGvRbRiH7suRTN0y_34V3a_l9_d5vx2BXsNvp3CNaFbjOcCna9jBf_n8HFTuWydDmY1eASGf8xNKp4j1zWBVjs_98w&aep=1&ntc=1&cs=1&sa=X&ved=2ahUKEwjii-bG4uGVAxWGdPUHHa-mLRwQ2J8OegQIDxAD&biw=1707&bih=811&dpr=1.13&mstk=AUtExfAhtuHjVZVxk0zPbfu1FgRAa6o11B6GmFetr0GZ4nStadmZih2_0ykLe4H7DhJskTDQCHjozgPi0LGo57nOX577hvHpFlrGtzJ0kC3nLZTaeSVKIn_zJu3wPNgjroem-lHhJCu3Bss9rt-kg58qGRfiUQjToM_pypIcnW57-Vi6RT8FYMkzt2qNxBhdpwwM2N_yVL43mll0swGgHwsLFbjyGItL9HvdKDHdsf_v77Z0Dgdeu6iBYLOThfaxgh_1tgFKhXCovEORFO08cEhSHg_JgkLnWqwqnudHhF7zmVZ_B_zKnPDsuZa9uRkkD80sH_d4hjUHxs436g&csuir=1&mtid=flleaprGBLvQg8UP-6vv0Ao&udm=50"
+
+my-web-project/
+├── docker-compose.yml         # Global organizer
+├── web-dev/                   # 🛠️ Dedicated Development Folder
+│   ├── Dockerfile             # Named exactly 'Dockerfile' (contains dev steps)
+│   └── index.html             # Your development webpage
+└── web-prod/                  # 🚀 Dedicated Production Folder
+    ├── Dockerfile             # Named exactly 'Dockerfile' (contains prod steps)
+    └── index.html             # Your final production webpage
+
+
+Dockerfile(Web-dev):
+
+From nginx:alpine
+
+copy index.html /usr/share/nginx/html/index.html
+or
+#Add index.html /usr/share/nginx/html/index.html
+
+Entrypoint["nginx", "-g", "daemon off;"]
+or
+#CMD ["nginx", "-g", "daemon off;"]
+
+
+
+
+YAML file:"Docker-compose.yml"
+		   
+services:
+  # 1. DEVELOPMENT SERVICE
+  web-dev:
+    build: ./web-dev               # Short syntax! Automatically finds './web-dev/Dockerfile'
+    image: my-app:dev
+    container_name: rcb-app-dev
+    ports:
+      - "8090:80"
+
+  # 2. PRODUCTION SERVICE
+  web-prod:
+    build: ./web-prod              # Short syntax! Automatically finds './web-prod/Dockerfile'
+    image: my-app:1.2.0
+    container_name: rcb-app-prod
+    ports:
+      - "80:80"
+	  
+  # 3. DATABASE (Pulled directly from Docker Hub)
+  my-database:                     # The service name
+    image: postgres:15-alpine      # No build step! Downloads directly from Docker Hub
+    container_name: rcb-db-container
+    environment:                   # Sets internal settings required by the Hub image
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret_password_123
+      - POSTGRES_DB=mydb
+	  
+	  
+	  #to build Image:
+	  
+	  docker componse up --build
+	  
+	  #to run container:
+	  
+	  docker compose up -d --build
+	  
+	  #to stop container:
+	  
+	  docker compose down
+	  
+	  #to run only web Prod:
+	  
+	  docker compose up -d --build web-prod
+	  
+	  #to stop single container:
+	  
+	  docker compose stop web-prod
+	  
+	  
+	  Need to deep dive into "ENV" from docker, ".env" "context:"  from compose 
+	  
+	  
+	  
+	  Docker swarm:
+	  
+	  Initialize master node:
+	  
+	  * docker swarm init --advertise-addr <private ip of EC2>
+	  
+	 * join node to the manager or join node as manager: 
+	  docker swarm join-token [OPTIONS] (worker|manager)
+	  By using: 
+	   docker swarm join-token worker
+	   you will get the command to join the worker to this master
+	  By using: 
+	   docker swarm join-token manager
+	   you will get the command to join the manager(master) to this master
+	   
+	   
+	  * To check the nodes in the swarm:
+	 => docker node ls
+	   
+	   **
+	   How to run container using swarm
+	 => docker service create --name <Service name> -p 8080:80 <image name>
+	 
+	  how to check the number of containers and it's replica in master:
+	 => docker service ls
+	  
+	  how to remove the service:
+	 => docker service rm <service name/id>
+	 
+	  how to scale the service:
+	  => docker service scale <Service name>=<number of replica required>
+	  
+	  how to update the service?
+	 => docker service update --image <latest image name> <Service Name>
+	 
+	 
+	 
+	 Jenkins folder:
+	 /var/lib/jenkins/workspace/<jenkins project>
+	 
+	 to run the docker in jenkins we need to add jenkins in docker group to do that we have some commands in ec2:
+	 sudo usermod -aG docker jenkins
+	 sudo systemctl restart jenkins
+	 
+	 
+	 
+
+	 
+	 	 

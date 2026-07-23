@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Env Test</title>
+</head>
+<body>
+    <h1>Runtime Environment Variable Injector</h1>
+    <div id="output" style="padding: 25px; background: #eee; font-family: monospace;"></div>
+
+    <script>
+        // Access the variables that the server injected into window._env_
+        const config = window._env_ || {};
+        
+        const outputDiv = document.getElementById('output');
+        outputDiv.innerHTML = `
+            <p><strong>API URL:</strong> ${config.API_URL || 'Not Found'}</p>
+            <p><strong>Environment:</strong> ${config.APP_ENV || 'Not Found'}</p>
+        `;
+        
+        console.log("Injected Config:", config);
+    </script>
+</body>
+</html>
